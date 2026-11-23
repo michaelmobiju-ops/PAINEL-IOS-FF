@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FF MOD MENU</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #09090d;
+  color: white;
+  font-family: Arial, sans-serif;
+  padding: 24px 15px;
+}
+.menu {
+  max-width: 420px;
+  margin: 30px auto;
+  padding: 24px;
+  background: #17171e;
+  border: 1px solid #e52b38;
+  border-radius: 18px;
+  box-shadow: 0 0 25px #e52b3822;
+}
+h1 {
+  text-align: center;
+  color: #ff3848;
+  font-size: 25px;
+}
+.subtitle {
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+}
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin: 25px 0;
+}
+.tabs button {
+  flex: 1;
+  background: #292932;
+  color: white;
+  border: 0;
+  padding: 12px 4px;
+  border-radius: 8px;
+}
+.tabs button.active {
+  background: #d92334;
+}
+.panel { display: none; }
+.panel.active { display: block; }
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 0;
+  border-bottom: 1px solid #333;
+}
+input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  accent-color: #ff3045;
+}
+input[type="range"] {
+  width: 100%;
+  accent-color: #ff3045;
+}
+h3 { color: #ff4050; }
+.save {
+  width: 100%;
+  margin-top: 25px;
+  padding: 15px;
+  background: #df2638;
+  color: white;
+  border: 0;
+  border-radius: 9px;
+  font-weight: bold;
+}
+#status {
+  text-align: center;
+  color: #aaa;
+  font-size: 12px;
+  margin-top: 14px;
+}
+</style>
+</head>
+<body>
+
+<div class="menu">
+  <h1>FF MOD MENU</h1>
+  <p class="subtitle">Painel de demonstração • iOS</p>
+
+  <div class="tabs">
+    <button class="active" onclick="tab('esp',this)">ESP</button>
+    <button onclick="tab('aim',this)">AIMBOT</button>
+    <button onclick="tab('config',this)">CONFIG</button>
+  </div>
+
+  <section id="esp" class="panel active">
+    <h3>ESP Visual</h3>
+    <label class="option">ESP Box Vermelho
+      <input id="box" type="checkbox">
+    </label>
+    <label class="option">ESP Line
+      <input id="line" type="checkbox">
+    </label>
+    <label class="option">ESP Nome
+      <input id="name" type="checkbox">
+    </label>
+  </section>
+
+  <section id="aim" class="panel">
+    <h3>Aimbot</h3>
+    <label class="option">Ativar Aimbot
+      <input id="aimbot" type="checkbox">
+    </label>
+    <label class="option">Aim Suave
+      <input id="smooth" type="checkbox">
+    </label>
+    <p>FOV: <span id="fovValue">90</span>°</p>
+    <input id="fov" type="range"
+      min="30" max="180" value="90"
+      oninput="document.getElementById('fovValue').textContent=this.value">
+  </section>
+
+  <section id="config" class="panel">
+    <h3>Configurações</h3>
+    <p>Cor ESP: Vermelho fixo</p>
+    <p>Plataforma: iPhone</p>
+    <p>Modo: Demonstração</p>
+  </section>
+
+  <button class="save" onclick="save()">
+    SALVAR CONFIGURAÇÕES
+  </button>
+  <p id="status">Nenhuma alteração salva.</p>
+</div>
+
+<script>
+function tab(id, button) {
+  document.querySelectorAll('.panel').forEach(
+    p => p.classList.remove('active')
+  );
+  document.querySelectorAll('.tabs button').forEach(
+    b => b.classList.remove('active')
+  );
+  document.getElementById(id).classList.add('active');
+  button.classList.add('active');
+}
+
+const ids = ['box','line','name','aimbot','smooth'];
+
+function save() {
+  const data = {};
+  ids.forEach(id => {
+    data[id] = document.getElementById(id).checked;
+  });
+  data.fov = Number(document.getElementById('fov').value);
+  localStorage.setItem('ffMenuDemo', JSON.stringify(data));
+  document.getElementById('status').textContent =
+    'Configurações salvas neste navegador!';
+}
+
+try {
+  const data = JSON.parse(localStorage.getItem('ffMenuDemo'));
+  if (data) {
+    ids.forEach(id => {
+      document.getElementById(id).checked = !!data[id];
+    });
+    if (data.fov >= 30 && data.fov <= 180) {
+      document.getElementById('fov').value = data.fov;
+      document.getElementById('fovValue').textContent = data.fov;
+    }
+  }
+} catch (e) {
+  console.log('Sem configurações anteriores.');
+}
+</script>
+
+</body>
+</html>
